@@ -71,6 +71,16 @@ func main() {
 		}
 	}
 
-	fmt.Print(sum_diffs)
+	right_counter := make(map[int]int)
+
+	for _, val := range right_col {
+		right_counter[val] += 1
+	}
+
+	similarity := 0
+	for _, val := range left_col {
+		similarity += right_counter[val] * val
+	}
+	fmt.Println(similarity)
 
 }

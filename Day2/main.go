@@ -39,12 +39,10 @@ func main() {
 			safe++
 		} else {
 			madeSafe := false
-			fmt.Println("Original: ", nums)
 			for i := 0; i < len(nums); i++ {
 				newNums := append([]int(nil), nums[:i]...)
 
 				newNums = append(newNums, nums[i+1:]...)
-				fmt.Println("Minus 1 Element: ", newNums)
 				if checkSafety(newNums) {
 					madeSafe = true
 					break

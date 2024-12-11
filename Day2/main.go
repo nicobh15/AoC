@@ -25,48 +25,65 @@ func main() {
 	b, err := io.ReadAll(file)
 	text := string(b[:])
 	rows := strings.Split(text, "\n")
-
-	// var reports [][]int
 	safe := 0
-	unsafe := 0
 
 	for _, row := range rows {
-		nums := strings.Split(row, " ")
-		flag := 0
-		diff := 0
-		for i := range nums {
-			if i == 0 {
-				continue
-			} else if i == 1 {
-				prev, _ := strconv.Atoi(nums[i-1])
-				curr, _ := strconv.Atoi(nums[i])
-				diff = curr - prev
-				if diff == 0 || diff < -3 || diff > 3 {
-					flag = 1
+		parts := strings.Split(row, " ")
+		nums := make([]int, len(parts))
+		for i, p := range parts {
+			val, _ := strconv.Atoi(p)
+			nums[i] = val
+		}
+
+		if checkSafety(nums) {
+			safe++
+		} else {
+			madeSafe := false
+			fmt.Println("Original: ", nums)
+			for i := 0; i < len(nums); i++ {
+				newNums := append([]int(nil), nums[:i]...)
+
+				newNums = append(newNums, nums[i+1:]...)
+				fmt.Println("Minus 1 Element: ", newNums)
+				if checkSafety(newNums) {
+					madeSafe = true
 					break
 				}
 			}
-
-			prev, _ := strconv.Atoi(nums[i-1])
-			curr, _ := strconv.Atoi(nums[i])
-
-			curr_diff := curr - prev
-			if (diff > 0 && curr_diff < 0) || (diff < 0 && curr_diff > 0) {
-				flag = 1
-				break
-			}
-
-			if !((curr_diff > 0 && curr_diff < 4) || (curr_diff < 0 && curr_diff > -4)) {
-				flag = 1
-				break
+			if madeSafe {
+				safe++
 			}
 		}
-		if flag != 0 {
-			flag = 0
-			unsafe += 1
-		} else {
-			safe += 1
-		}
+
 	}
 	fmt.Println(safe)
+}
+
+func checkSafety(nums []int) bool {
+	var diff int
+	for i := range nums {
+		if i == 0 {
+			continue
+		} else if i == 1 {
+			prev := nums[i-1]
+			curr := nums[i]
+			diff = curr - prev
+			if diff == 0 || diff < -3 || diff > 3 {
+				return false
+			}
+		}
+
+		prev := nums[i-1]
+		curr := nums[i]
+
+		curr_diff := curr - prev
+		if (diff > 0 && curr_diff < 0) || (diff < 0 && curr_diff > 0) {
+			return false
+		}
+
+		if !((curr_diff > 0 && curr_diff < 4) || (curr_diff < 0 && curr_diff > -4)) {
+			return false
+		}
+	}
+	return true
 }
